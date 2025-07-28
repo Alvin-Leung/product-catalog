@@ -4,7 +4,6 @@ using Api.Data;
 var builder = WebApplication.CreateBuilder(args);
 var corsPolicyName = "_allowSpecificOrigins";
 
-// --- Add CORS Policy ---
 builder.Services.AddCors(options =>
 {
     options.AddPolicy(name: corsPolicyName,
