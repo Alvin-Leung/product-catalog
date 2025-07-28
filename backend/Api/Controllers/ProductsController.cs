@@ -11,6 +11,13 @@ namespace Api.Controllers
     [ApiController]
     public class ProductsController : ControllerBase
     {
+        // Improvements
+        // - Add logging and observability
+        // - Implement better error handling, especially in GetProducts endpoint
+        // - Implement pagination in GetProducts endpoint
+        // - Consider using a service layer for business logic separation
+        // - Use DTOs for request and response models to decouple from database models
+
         private readonly ProductCatalogContext _context;
 
         public ProductsController(ProductCatalogContext context)
