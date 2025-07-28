@@ -19,11 +19,14 @@ namespace Api.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Product>>> GetProducts([FromQuery] string? searchTerm)
+        public async Task<ActionResult<GetProductsResponse>> GetProducts([FromQuery] string? searchTerm)
         {
             if (string.IsNullOrWhiteSpace(searchTerm))
             {
-                return await _context.Products.ToListAsync();
+                return new GetProductsResponse
+                {
+                    Products = await _context.Products.ToListAsync()
+                };
             }
 
             // Add a wildcard (*) to the search term to allow for prefix matching (e.g., "comp" matches "computer").
@@ -44,7 +47,10 @@ namespace Api.Controllers
                 .AsNoTracking() // Avoid overhead of change tracking since we are only reading data
                 .ToListAsync();
 
-            return products; // TODO: Add dto-to-response mapping
+            return new GetProductsResponse
+            {
+                Products = products
+            };
         }
 
         [HttpPost("generate")]

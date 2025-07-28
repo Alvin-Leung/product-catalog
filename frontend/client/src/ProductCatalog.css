@@ -1,0 +1,96 @@
+:root {
+  --table-bg: #fff;
+  --table-border: #dfe2e5;
+  --table-shadow: rgba(0,0,0,0.05);
+  --header-bg: #f8f9fa;
+  --row-bg-odd: #fff;
+  --row-bg-even: #fdfdfd;
+  --row-bg-hover: #f1f8ff;
+  --row-border: #eee;
+  --text-primary: #212529;
+  --status-error-bg: #ffebee;
+  --status-error-border: #d32f2f;
+  --status-error-text: #d32f2f;
+  background-color: #f1f8ff;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --table-bg: #1e2124;
+    --table-border: #33373a;
+    --table-shadow: rgba(0,0,0,0.2);
+    --header-bg: #282c30;
+    --row-bg-odd: #1e2124;
+    --row-bg-even: #212529;
+    --row-bg-hover: #32383e;
+    --row-border: #33373a;
+    --text-primary: #e0e0e0;
+    --status-error-bg: #4d1212;
+    --status-error-border: #e57373;
+    --status-error-text: #ef9a9a;
+    background-color: #242424;
+  }
+}
+
+.product-table {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  border: 1px solid var(--table-border);
+  border-radius: 8px;
+  overflow: hidden;
+  max-width: 1600px;
+  margin: 2rem auto;
+  box-shadow: 0 4px 8px var(--table-shadow);
+  background-color: var(--table-bg);
+  color: var(--text-primary);
+}
+
+.table-header,
+.table-row {
+  display: grid;
+  grid-template-columns: 1.5fr 2.5fr repeat(2, 1fr) 0.7fr 0.6fr 0.7fr 1fr 0.8fr 0.6fr 1fr 1fr;
+  align-items: center;
+  border-bottom: 1px solid var(--row-border);
+}
+
+.table-header {
+  background-color: var(--header-bg);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.table-header > div,
+.table-row > div {
+  padding: 12px 15px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 0.9rem;
+}
+
+.table-row:nth-of-type(odd) {
+  background-color: var(--row-bg-odd);
+}
+.table-row:nth-of-type(even) {
+  background-color: var(--row-bg-even);
+}
+.table-row:hover {
+  background-color: var(--row-bg-hover);
+}
+
+.status-message {
+  text-align: center;
+  padding: 2rem;
+  font-size: 1.2rem;
+  font-family: sans-serif;
+  color: var(--text-primary);
+}
+
+.status-message.error {
+  color: var(--status-error-text);
+  background-color: var(--status-error-bg);
+  border: 1px solid var(--status-error-border);
+  border-radius: 8px;
+  max-width: 800px;
+  margin: 2rem auto;
+}
