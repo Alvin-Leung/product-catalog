@@ -19,9 +19,32 @@ namespace Api.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Product>>> GetProducts() // TODO: Create dto-to-response mapping
+        public async Task<ActionResult<IEnumerable<Product>>> GetProducts([FromQuery] string? searchTerm)
         {
-            return await _context.Products.ToListAsync();
+            if (string.IsNullOrWhiteSpace(searchTerm))
+            {
+                return await _context.Products.ToListAsync();
+            }
+
+            // Add a wildcard (*) to the search term to allow for prefix matching (e.g., "comp" matches "computer").
+            // FTS5 uses a specific query syntax. We'll keep it simple here.
+            var ftsQuery = $"{searchTerm}*";
+
+            var products = await _context.Products
+                .FromSqlInterpolated($@"
+                    SELECT p.*
+                    FROM Products p
+                    JOIN (
+                        SELECT ProductId, rank
+                        FROM ProductFTS
+                        WHERE ProductFTS MATCH {ftsQuery}
+                    ) AS fts ON p.Id = fts.ProductId
+                    ORDER BY fts.rank
+                ")
+                .AsNoTracking() // Avoid overhead of change tracking since we are only reading data
+                .ToListAsync();
+
+            return products; // TODO: Add dto-to-response mapping
         }
 
         [HttpPost("generate")]
@@ -37,8 +60,8 @@ namespace Api.Controllers
                     Detail = "Count must be greater than 0"
                 });
             }
-            
-            
+
+
             var products = FakeProductGenerator.GenerateProducts(request.NumProductsToGenerate);
 
             try
