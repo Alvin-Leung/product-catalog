@@ -2,5 +2,5 @@
 
 public class GenerateProductsResponse
 {
-    public required int Count { get; init; }
+    public required int NumProductsGenerated { get; init; }
 }

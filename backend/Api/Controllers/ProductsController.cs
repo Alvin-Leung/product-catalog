@@ -25,23 +25,40 @@ namespace Api.Controllers
         }
 
         [HttpPost("generate")]
-        public async Task<ActionResult<GenerateProductsResponse>> GenerateProducts(int count)
+        public async Task<IResult> GenerateProducts(GenerateProductsRequest request)
         {
-            var products = FakeProductGenerator.GenerateProducts(count);
+            if (request.NumProductsToGenerate <= 0)
+            {
+                return Results.Problem(new ProblemDetails
+                {
+                    Type = "Bad Request",
+                    Title = "Invalid count",
+                    Status = StatusCodes.Status400BadRequest,
+                    Detail = "Count must be greater than 0"
+                });
+            }
+            
+            
+            var products = FakeProductGenerator.GenerateProducts(request.NumProductsToGenerate);
 
             try
             {
                 await _context.Products.AddRangeAsync(products);
                 await _context.SaveChangesAsync();
 
-                return CreatedAtAction("GenerateProducts", value: new GenerateProductsResponse
+                return Results.Ok(value: new GenerateProductsResponse
                 {
-                    Count = products.Count
+                    NumProductsGenerated = request.NumProductsToGenerate,
                 });
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"An error occurred while inserting products: {ex.Message}");
+                return Results.Problem(new ProblemDetails
+                {
+                    Title = "Internal Server Error",
+                    Status = StatusCodes.Status500InternalServerError,
+                    Detail = $"An error occurred while inserting products: {ex.Message}"
+                });
             }
         }
     }
