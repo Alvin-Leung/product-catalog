@@ -3,29 +3,47 @@ import { FixedSizeList as List } from 'react-window';
 import './ProductCatalog.css';
 
 const ProductCatalog = () => {
+  const [searchTerm, setSearchTerm] = useState('');
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState(searchTerm);
+  
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
+    const timerId = setTimeout(() => {
+      setDebouncedSearchTerm(searchTerm);
+    }, 500);
+
+    return () => {
+      clearTimeout(timerId);
+    };
+  }, [searchTerm]);
+
+  useEffect(() => {
     const fetchProducts = async () => {
+      if (!debouncedSearchTerm) {
+        const data = await fetchProductsResponse()
+        setProducts(data.products || []);
+        setLoading(false);
+        return;
+      }
+      setLoading(true);
+      setError(null);
       try {
-        const response = await fetch('https://localhost:7120/api/Products');
-        if (!response.ok) {
-          throw new Error(`Network response was not ok: ${response.statusText}`);
-        }
-        const data = await response.json();
+        const data = await fetchProductsResponse(debouncedSearchTerm);
         setProducts(data.products || []);
       } catch (e) {
         console.error("Failed to fetch products:", e);
         setError("Failed to load products. Check that the backend server is running and accessible.");
+        setProducts([]);
       } finally {
         setLoading(false);
       }
     };
 
     fetchProducts();
-  }, []);
+  }, [debouncedSearchTerm]);
 
   const headers = [
     'Name', 'Description', 'Category', 'Brand', 'Price', 'Stock', 'SKU',
@@ -54,34 +72,61 @@ const ProductCatalog = () => {
     );
   };
 
-  if (loading) {
-    return <div className="status-message">Loading products... ⏳</div>;
-  }
-
-  if (error) {
-    return <div className="status-message error">{error} ❌</div>;
-  }
-
   return (
-    <div className="product-table">
-      <div className="table-header">
-        {headers.map((header) => (
-          <div key={header}><b>{header}</b></div>
-        ))}
+    <div className="catalog-container">
+      <div className="search-container">
+        <input
+          type="text"
+          className="search-input"
+          placeholder="Search for products..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
       </div>
-      
-      <div className="table-body">
-        <List
-          height={700}
-          itemCount={products.length}
-          itemSize={65}
-          width="100%"
-        >
-          {Row}
-        </List>
+
+      <div className="product-table">
+        <div className="table-header">
+          {headers.map((header) => (
+            <div key={header}><b>{header}</b></div>
+          ))}
+        </div>
+        
+        <div className="table-body">
+          {loading && <div className="status-message">Loading... ⏳</div>}
+          {error && <div className="status-message error">{error}</div>}
+          {!loading && !error && products.length === 0 && (
+            <div className="status-message">No products found.</div>
+          )}
+          {!loading && !error && products.length > 0 && (
+            <List
+              height={700}
+              itemCount={products.length}
+              itemSize={65}
+              width="100%"
+            >
+              {Row}
+            </List>
+          )}
+        </div>
       </div>
     </div>
   );
 };
 
 export default ProductCatalog;
+
+async function fetchProductsResponse(searchTerm = null) {
+  const url = new URL('https://localhost:7120/api/Products');
+
+  if (searchTerm) {
+    url.searchParams.append('searchTerm', searchTerm);
+  }
+
+  const response = await fetch(url);
+
+  if (!response.ok) {
+    throw new Error(`Network response was not ok: ${response.statusText}`);
+  }
+
+  return await response.json();
+}
