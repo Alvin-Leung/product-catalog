@@ -2,7 +2,7 @@ namespace Api.Models.Database
 {
     public class Product
     {
-        public required Guid Id { get; set; }
+        public required Guid Id { get; init; }
         public required DateTime CreatedTimestampUtc { get; init; } = DateTime.UtcNow;
 
         public required string Name { get; init; }
