@@ -1,79 +1,112 @@
 # Dynamic Product Catalog
 
-This is a full-stack application featuring a React/Vite frontend, a C# ASP.NET Core backend with Entity Framework, and a SQLite database.
+This is an example full-stack application featuring a React/Vite frontend, a C# ASP.NET Core backend, and a SQLite database. It showcases an implementation of debounced search on the frontend, and full-text search on the backend.
 
+# Features
+
+Below is a summary of features already implemented for this example application.
+
+**Frontend**
+- Dynamic search of backend products as you type
+- Debounced search to prevent overloading the backend
+- Efficient loading and display of 1000s of items from backend
+
+**Backend and Database**
+- Convenient test data generation endpoint for populating database with example product test data
+- Database
+  - Full-text search design for efficient dynamic search 
+  - Quick database setup via Entity Framework
+  - Minimal database dependencies with SQLite
+ 
+# Future Improvements
+
+Below are features that could greatly improve this example application. If you are using this full-stack application for educational purposes, the features below could be great to implement as an exercise:
+
+**Frontend**
+- Adjustable column width
+- Highlight found search terms
+- Column visibility selection
+- Sort by column
+- Filter on specific columns
+- Total result count
+
+**Backend**
+- Return paged results
+- Better error handling
+- Logging
+
+**General**
+Setting up and running app is not easy right now. This could be improved with
+- Scripting to simplify setup of frontend and backend
+- OR Containerizing frontend and backend to remove the need for installation of dependencies
+ 
 # Setup and Run Instructions (Local)
-To get this application up and running on your local machine, follow these steps:
 
-1. Prerequisites:
+To get this application up and running on your local machine, execute the steps below.
 
-- .NET SDK: Ensure you have the .NET 8 SDK (or later compatible version) installed. You can download it from https://dotnet.microsoft.com/download/dotnet/8.0.
-- Node.js & npm: Install Node.js (which includes npm) from https://nodejs.org/.
-- Git: Make sure Git is installed to clone the repository.
+## 1. Prerequisites
 
-2. Clone the repository
+- .NET SDK: Ensure you have the .NET 8 SDK (or later compatible version) installed. You can download it from https://dotnet.microsoft.com/download/dotnet/8.0
+- Node.js & npm: Install Node.js (which includes npm) from https://nodejs.org/
+- Git: Make sure Git is installed to clone the repository
 
-3. Backend Setup & Run:
+## 2. Clone Repository
 
-a. Navigate into the backend directory:
+```shell
+git clone https://github.com/Alvin-Leung/product-catalog.git
+```
 
-Bash
+## 3. Backend Setup & Run
+
+a. Navigate into the backend directory
 
 ```shell
 cd backend/Api
 ```
 
-b. Restore NuGet packages:
+b. Restore NuGet packages
 
-Bash
-
-```
+```shell
 dotnet restore
 ```
 
-c. Create the database with the following:
+c. Create the database using Entity Framework
 
-Bash
-
-```
+```shell
 dotnet ef database update
 ```
 
 d. Run the backend application:
 
-Bash
-
-```
+```shell
 dotnet run
 ```
 
-4. Frontend Setup & Run:
+e. [Optional] Check out the backend swagger page at https://localhost:7120/swagger/index.html
 
-a. Open a new terminal window and navigate to the frontend directory:
+## 4. Frontend Setup & Run:
 
-Bash
+a. Open a new terminal window and navigate to the frontend directory
 
-```
+```shell
 cd frontend/client
 ```
 
-b. Install frontend dependencies:
+b. Install frontend dependencies
 
-Bash
-
-```
+```shell
 npm install
 ```
 
-c. Run the frontend development server:
+c. Run the frontend development server
 
-Bash
-
-```
+```shell
 npm run dev
 ```
 
-5. Populate data
+e. Note the URL indicated by the above command
+
+## 5. Populate Test Data
 
 Run the following curl command to create test product data:
 
@@ -87,6 +120,8 @@ curl -X 'POST' \
 }'
 ```
 
-numProductsToGenerate can be set to your desired number
+`numProductsToGenerate` can be set to your desired number. Alternatively, this can be done via the backend swagger page at https://localhost:7120/swagger/index.html.
 
-6. Open a browser and navigate to the front end url to check out the app :)
+## 6. Try the App
+
+Open a browser and navigate to http://localhost:5173/ to check out the app :)
